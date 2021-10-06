@@ -48,7 +48,32 @@ class ContactController {
 
 	}
 
-	update() {
+	update(request, response) {
+		const { id } = request.params
+		const { name, email, phone, category } = request.body
+
+		let contactExists = ContactRepository.findById(id)
+
+		if (!contactExists) {
+			return response.status(400).json({ error: 'User not found' })
+		}
+
+		contactExists = ContactRepository.findByEmail(email)
+
+		if (contactExists && contactExists.id !== id) {
+			return response.status(400).json({ error: 'You have another contact with this email' })
+		}
+
+		contactExists = ContactRepository.findByPhone(phone)
+		
+		if (contactExists && contactExists.id !== id) {
+			return response.status(400).json({ error: 'You have another contact with this phone number' })
+		}
+
+		const contact = ContactRepository.update(id, { name, email, phone, category })
+
+		response.send(contact)
+
 	}
 
 	delete(request, response) {

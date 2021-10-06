@@ -19,7 +19,7 @@ class ContactRepository {
 		return contacts.find((contact) => contact.phone === phone)
 	}
 
-	create({ name, email, phone, category=null }) {
+	create({ name, email, phone, category }) {
 		const newContact = {
 			id: v4(),
 			name, 
@@ -29,6 +29,20 @@ class ContactRepository {
 		}
 
 		contacts.push(newContact)
+	}
+
+	update(id, { name, email, phone, category }) {
+		const updatedContact = {
+			id,
+			name, 
+			email, 
+			phone,
+			category
+		}
+
+		contacts = contacts.map(contact => contact.id === id ? updatedContact : contact)
+
+		return updatedContact
 	}
 
 	delete(id) {
