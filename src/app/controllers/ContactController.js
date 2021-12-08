@@ -1,4 +1,5 @@
 const ContactRepository = require('../repositories/ContactRepository')
+const isValidEmail = require('../utils/isValidEmail')
 
 class ContactController {
 	index(request, response) {
@@ -25,14 +26,16 @@ class ContactController {
 			return response.status(400).json({ error: 'Invalid name' })
 		}
 
-		let contactExists = ContactRepository.findByEmail(email)
+		if (!email || !isValidEmail(email)) {
+			return response.status(400).json({ error: 'Invalid email' })
+		}
 		
+		let contactExists = ContactRepository.findByEmail(email)
 		if (contactExists) {
 			return response.status(400).json({ error: 'You have another contact with this email' })
 		}
 
 		contactExists = ContactRepository.findByPhone(phone)
-		
 		if (contactExists) {
 			return response.status(400).json({ error: 'You have another contact with this phone number' })
 		}
@@ -56,6 +59,14 @@ class ContactController {
 
 		if (!contactExists) {
 			return response.status(400).json({ error: 'User not found' })
+		}
+
+		if (!name) {
+			return response.status(400).json({ error: 'Invalid name' })
+		}
+
+		if (!email || !isValidEmail(email)) {
+			return response.status(400).json({ error: 'Invalid email' })
 		}
 
 		contactExists = ContactRepository.findByEmail(email)

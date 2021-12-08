@@ -1,25 +1,34 @@
 const { v4 } = require('uuid')
+const fs = require('fs')
+const path = require('path')
 
-let contacts = require('../mocks/contacts')
+const readJSON = require('../utils/readJSON')
+
+let dbPath = path.resolve('src', 'app', 'data', 'data.json')
 
 class ContactRepository {
 	findAll() {
-		return contacts	
+		return readJSON(dbPath)
 	}
 
 	findById(id) {
-		return contacts.find((contact) => contact.id === id)
+		if (!id) return
+		return readJSON(dbPath).find((contact) => contact.id === id)
 	}
 
 	findByEmail(email) {
-		return contacts.find((contact) => contact.email === email)
+		if (!email) return
+		return readJSON(dbPath).find((contact) => contact.email === email)
 	}
 
 	findByPhone(phone) {
-		return contacts.find((contact) => contact.phone === phone)
+		if (!phone) return
+		return readJSON(dbPath).find((contact) => contact.phone === phone)
 	}
 
 	create({ name, email, phone, category }) {
+		let db = readJSON(dbPath)
+		
 		const newContact = {
 			id: v4(),
 			name, 
@@ -28,10 +37,14 @@ class ContactRepository {
 			category
 		}
 
-		contacts.push(newContact)
+		db.push(newContact)
+		
+		fs.writeFileSync(dbPath, JSON.stringify(db))
 	}
 
 	update(id, { name, email, phone, category }) {
+		let db = readJSON(dbPath)
+	
 		const updatedContact = {
 			id,
 			name, 
@@ -40,13 +53,18 @@ class ContactRepository {
 			category
 		}
 
-		contacts = contacts.map(contact => contact.id === id ? updatedContact : contact)
+		db = db.map(contact => contact.id === id ? updatedContact : contact)
+		fs.writeFileSync(dbPath, JSON.stringify(db))
 
 		return updatedContact
 	}
 
 	delete(id) {
-		contacts = contacts.filter(contact => contact.id !== id)
+		let db = readJSON(dbPath)
+
+		db = db.filter(contact => contact.id !== id)
+
+		fs.writeFileSync(dbPath, JSON.stringify(db))
 	}
 
 }
