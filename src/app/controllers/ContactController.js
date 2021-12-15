@@ -13,7 +13,7 @@ class ContactController {
 		const contact = ContactRepository.findById(id)
 
 		if (!contact) {
-			return response.status(404).json({ error: 'User not found' })
+			return response.status(404).json({ error: 'Contact not found' })
 		}
 
 		response.json(contact)
@@ -47,7 +47,7 @@ class ContactController {
 			category
 		})
 
-		response.json(contact)
+		response.status(201).json(contact)
 
 	}
 
@@ -58,7 +58,7 @@ class ContactController {
 		let contactExists = ContactRepository.findById(id)
 
 		if (!contactExists) {
-			return response.status(400).json({ error: 'User not found' })
+			return response.status(400).json({ error: 'Contact not found' })
 		}
 
 		if (!name) {
@@ -92,7 +92,7 @@ class ContactController {
 		const contact = ContactRepository.findById(id)
 
 		if (!contact) {
-			return response.status(404).json({ error: 'User not found' })
+			return response.status(404).json({ error: 'Contact not found' })
 		}
 
 		ContactRepository.delete(id)
