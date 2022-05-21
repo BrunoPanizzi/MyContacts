@@ -46,7 +46,6 @@ class ContactController {
 			phone,
 			category
 		})
-
 		response.status(201).json(contact)
 
 	}

@@ -40,6 +40,7 @@ class ContactRepository {
 		db.push(newContact)
 		
 		fs.writeFileSync(dbPath, JSON.stringify(db))
+		return newContact
 	}
 
 	update(id, { name, email, phone, category }) {
