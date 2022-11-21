@@ -13,5 +13,4 @@ router.put('/contacts/:id', ContactController.update)
 
 router.delete('/contacts/:id', ContactController.delete)
 
-
 module.exports = router
