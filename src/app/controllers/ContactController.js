@@ -1,102 +1,88 @@
-const ContactRepository = require('../repositories/ContactRepository')
-const isValidEmail = require('../utils/isValidEmail')
+const ContactRepository = require("../repositories/ContactRepository");
+
+const isValidEmail = require("../utils/isValidEmail");
 
 class ContactController {
-	index(request, response) {
-		const contacts = ContactRepository.findAll()
+  async index(request, response) {
+    const contacts = await ContactRepository.findAll();
 
-		response.json(contacts)
-	}
+    response.json(contacts);
+  }
 
-	show(request, response) {
-		const { id } = request.params
-		const contact = ContactRepository.findById(id)
+  async show(request, response) {
+    const { id } = request.params;
+    const contact = await ContactRepository.findById(id);
 
-		if (!contact) {
-			return response.status(404).json({ error: 'Contact not found' })
-		}
+    if (!contact) {
+      return response.status(404).json({ error: "Contact not found" });
+    }
 
-		response.json(contact)
-	}
+    response.json(contact);
+  }
 
-	store(request, response) {
-		const { name, email, phone, category } = request.body
-		
-		if (!name) {
-			return response.status(400).json({ error: 'Invalid name' })
-		}
+  async store(request, response) {
+    const { name, email, phone, category_id } = request.body;
 
-		if (!email || !isValidEmail(email)) {
-			return response.status(400).json({ error: 'Invalid email' })
-		}
-		
-		let contactExists = ContactRepository.findByEmail(email)
-		if (contactExists) {
-			return response.status(400).json({ error: 'You have another contact with this email' })
-		}
+    if (!name) {
+      return response.status(400).json({ error: "Invalid name" });
+    }
 
-		contactExists = ContactRepository.findByPhone(phone)
-		if (contactExists) {
-			return response.status(400).json({ error: 'You have another contact with this phone number' })
-		}
-		
-		const contact = ContactRepository.create({
-			name, 
-			email, 
-			phone,
-			category
-		})
-		response.status(201).json(contact)
+    if (!isValidEmail(email)) {
+      return response.status(400).json({ error: "Invalid email" });
+    }
 
-	}
+    const contact = await ContactRepository.create({
+      name,
+      email,
+      phone,
+      category_id,
+    });
+    response.status(201).json(contact);
+  }
 
-	update(request, response) {
-		const { id } = request.params
-		const { name, email, phone, category } = request.body
+  async update(request, response) {
+    const { id } = request.params;
+    const { name, email, phone, category } = request.body;
 
-		let contactExists = ContactRepository.findById(id)
+    const contactExists = await ContactRepository.findById(id);
 
-		if (!contactExists) {
-			return response.status(400).json({ error: 'Contact not found' })
-		}
+    if (!contactExists) {
+      return response.status(400).json({ error: "Contact not found" });
+    }
 
-		if (!name) {
-			return response.status(400).json({ error: 'Invalid name' })
-		}
+    if (!name) {
+      return response.status(400).json({ error: "Invalid name" });
+    }
 
-		if (!email || !isValidEmail(email)) {
-			return response.status(400).json({ error: 'Invalid email' })
-		}
+    if (!isValidEmail(email)) {
+      return response.status(400).json({ error: "Invalid email" });
+    }
 
-		contactExists = ContactRepository.findByEmail(email)
+    const contactWithEmail = await ContactRepository.findByEmail(email);
 
-		if (contactExists && contactExists.id !== id) {
-			return response.status(400).json({ error: 'You have another contact with this email' })
-		}
+    if (contactWithEmail && contactWithEmail !== id) {
+      return response
+        .status(400)
+        .json({ error: "You already have another contact with this email" });
+    }
 
-		contactExists = ContactRepository.findByPhone(phone)
-		
-		if (contactExists && contactExists.id !== id) {
-			return response.status(400).json({ error: 'You have another contact with this phone number' })
-		}
+    const contact = await ContactRepository.update(id, {
+      name,
+      email,
+      phone,
+      category,
+    });
 
-		const contact = ContactRepository.update(id, { name, email, phone, category })
+    response.send(contact);
+  }
 
-		response.send(contact)
+  async delete(request, response) {
+    const { id } = request.params;
 
-	}
+    await ContactRepository.delete(id);
 
-	delete(request, response) {
-		const { id } = request.params
-		const contact = ContactRepository.findById(id)
-
-		if (!contact) {
-			return response.status(404).json({ error: 'Contact not found' })
-		}
-
-		ContactRepository.delete(id)
-		response.sendStatus(204)
-	}
+    response.sendStatus(204);
+  }
 }
 
-module.exports = new ContactController()
+module.exports = new ContactController();

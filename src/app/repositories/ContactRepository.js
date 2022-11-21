@@ -1,73 +1,54 @@
-const { v4 } = require('uuid')
-const fs = require('fs')
-const path = require('path')
-
-const readJSON = require('../utils/readJSON')
-
-let dbPath = path.resolve('src', 'app', 'data', 'data.json')
+const db = require("../../database");
 
 class ContactRepository {
-	findAll() {
-		return readJSON(dbPath)
-	}
+  async findAll() {
+    const rows = await db.query("SELECT * FROM contacts ORDER BY name ASC");
+    return rows;
+  }
 
-	findById(id) {
-		if (!id) return
-		return readJSON(dbPath).find((contact) => contact.id === id)
-	}
+  async findById(id) {
+    const [row] = await db.query("SELECT * FROM contacts WHERE id = $1", [id]);
+    return row;
+  }
 
-	findByEmail(email) {
-		if (!email) return
-		return readJSON(dbPath).find((contact) => contact.email === email)
-	}
+  async findByEmail(email) {
+    const [row] = await db.query("SELECT * FROM contacts WHERE email = $1", [
+      email,
+    ]);
+    return row;
+  }
 
-	findByPhone(phone) {
-		if (!phone) return
-		return readJSON(dbPath).find((contact) => contact.phone === phone)
-	}
+  async create({ name, email, phone, category_id }) {
+    const [row] = await db.query(
+      `
+      INSERT INTO contacts(name, email, phone, category_id) 
+      VALUES($1, $2, $3, $4) 
+      RETURNING *
+      `,
+      [name, email, phone, category_id]
+    );
 
-	create({ name, email, phone, category }) {
-		let db = readJSON(dbPath)
-		
-		const newContact = {
-			id: v4(),
-			name, 
-			email, 
-			phone,
-			category
-		}
+    return row;
+  }
 
-		db.push(newContact)
-		
-		fs.writeFileSync(dbPath, JSON.stringify(db))
-		return newContact
-	}
+  async update(id, { name, email, phone, category_id }) {
+    const [row] = await db.query(
+      `
+      UPDATE contacts 
+      SET name = $1, email = $2, phone = $3, category_id = $4
+      WHERE id = $5
+      RETURNING * 
+      `,
+      [name, email, phone, category_id, id]
+    );
+    return row;
+  }
 
-	update(id, { name, email, phone, category }) {
-		let db = readJSON(dbPath)
-	
-		const updatedContact = {
-			id,
-			name, 
-			email, 
-			phone,
-			category
-		}
+  async delete(id) {
+    const deleteOp = await db.query("DELETE FROM contacts WHERE id = $1", [id]);
 
-		db = db.map(contact => contact.id === id ? updatedContact : contact)
-		fs.writeFileSync(dbPath, JSON.stringify(db))
-
-		return updatedContact
-	}
-
-	delete(id) {
-		let db = readJSON(dbPath)
-
-		db = db.filter(contact => contact.id !== id)
-
-		fs.writeFileSync(dbPath, JSON.stringify(db))
-	}
-
+    return deleteOp;
+  }
 }
 
-module.exports = new ContactRepository()
+module.exports = new ContactRepository();
