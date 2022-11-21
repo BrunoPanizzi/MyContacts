@@ -58,12 +58,16 @@ class ContactController {
       return response.status(400).json({ error: 'Invalid email' })
     }
 
-    const contactWithEmail = await ContactRepository.findByEmail(email)
+    const contactWithEmail = await ContactRepository.findByEmail(
+      email
+    )
 
     if (contactWithEmail && contactWithEmail !== id) {
       return response
         .status(400)
-        .json({ error: 'You already have another contact with this email' })
+        .json({
+          error: 'You already have another contact with this email',
+        })
     }
 
     const contact = await ContactRepository.update(id, {

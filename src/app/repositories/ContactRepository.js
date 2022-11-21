@@ -2,19 +2,25 @@ const db = require('../../database')
 
 class ContactRepository {
   async findAll() {
-    const rows = await db.query('SELECT * FROM contacts ORDER BY name ASC')
+    const rows = await db.query(
+      'SELECT * FROM contacts ORDER BY name ASC'
+    )
     return rows
   }
 
   async findById(id) {
-    const [row] = await db.query('SELECT * FROM contacts WHERE id = $1', [id])
+    const [row] = await db.query(
+      'SELECT * FROM contacts WHERE id = $1',
+      [id]
+    )
     return row
   }
 
   async findByEmail(email) {
-    const [row] = await db.query('SELECT * FROM contacts WHERE email = $1', [
-      email,
-    ])
+    const [row] = await db.query(
+      'SELECT * FROM contacts WHERE email = $1',
+      [email]
+    )
     return row
   }
 
@@ -45,7 +51,10 @@ class ContactRepository {
   }
 
   async delete(id) {
-    const deleteOp = await db.query('DELETE FROM contacts WHERE id = $1', [id])
+    const deleteOp = await db.query(
+      'DELETE FROM contacts WHERE id = $1',
+      [id]
+    )
 
     return deleteOp
   }
