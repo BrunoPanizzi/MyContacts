@@ -22,4 +22,6 @@ app.use((request, response, next) => {
 
 app.use(routes)
 
-app.listen(3001, () => console.log('App started at http://localhost:3001/'))
+app.listen(3001, () =>
+  console.log('App started at http://localhost:3001/')
+)

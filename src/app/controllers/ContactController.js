@@ -62,12 +62,10 @@ class ContactController {
       email
     )
 
-    if (contactWithEmail && contactWithEmail !== id) {
-      return response
-        .status(400)
-        .json({
-          error: 'You already have another contact with this email',
-        })
+    if (contactWithEmail && contactWithEmail.id !== id) {
+      return response.status(400).json({
+        error: 'You already have another contact with this email',
+      })
     }
 
     const contact = await ContactRepository.update(id, {
