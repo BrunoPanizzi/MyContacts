@@ -39,7 +39,7 @@ class ContactRepository {
       VALUES($1, $2, $3, $4) 
       RETURNING *
       `,
-      [name, email, phone, category_id]
+      [name, email, phone, category_id || null]
     )
 
     return row
@@ -53,7 +53,7 @@ class ContactRepository {
       WHERE id = $5
       RETURNING * 
       `,
-      [name, email, phone, category_id, id]
+      [name, email, phone, category_id || null, id]
     )
     return row
   }
