@@ -4,8 +4,8 @@
     "node": "16.13.0"
   },
   "scripts": {
-    "build": "node src/index.js",
-    "start": "nodemon src/index.js -e js"
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js -e js"
   },
   "dependencies": {
     "dotenv": "^16.0.3",
