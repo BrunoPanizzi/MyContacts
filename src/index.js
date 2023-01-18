@@ -7,6 +7,7 @@ const routes = require('./routes')
 const app = express()
 
 const port = process.env['SERVERPORT']
+const hostname = process.env['HOSTNAME']
 
 // body parser
 app.use(express.json())
@@ -35,6 +36,6 @@ app.use((error, request, response, next) => {
   response.sendStatus(500)
 })
 
-app.listen(port, () =>
+app.listen(port, hostname, () =>
   console.log('App started at http://localhost:3001/')
 )
