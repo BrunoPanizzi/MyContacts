@@ -1,9 +1,12 @@
+require('dotenv').config()
 const express = require('express')
 require('express-async-errors')
 
 const routes = require('./routes')
 
 const app = express()
+
+const port = process.env['SERVERPORT']
 
 // body parser
 app.use(express.json())
@@ -32,6 +35,6 @@ app.use((error, request, response, next) => {
   response.sendStatus(500)
 })
 
-app.listen(3001, () =>
+app.listen(port, () =>
   console.log('App started at http://localhost:3001/')
 )
