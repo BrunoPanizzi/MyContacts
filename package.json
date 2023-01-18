@@ -4,6 +4,7 @@
     "node": "16.13.0"
   },
   "scripts": {
+    "build": "node src/index.js",
     "start": "nodemon src/index.js -e js"
   },
   "dependencies": {
