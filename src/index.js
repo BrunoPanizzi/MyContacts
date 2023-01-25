@@ -36,5 +36,5 @@ app.use((error, request, response, next) => {
 })
 
 app.listen(port || 3001, () => {
-  console.log('app is up')
+  console.log(`🚀🚀 App started at http://localhost:${port || 3001}`)
 })
